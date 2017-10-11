@@ -1,38 +1,32 @@
 from pico2d import *
-import game_framework
 import title_state
+import game_framework
 import random
-
-name = "TitleState"
-#image = None
-
-class Num:
-    def __init__(self):
-        self.image = load_image('0.png')
-
-    def draw(self):
-        self.image.draw(40, 550)
+import numbers
 
 class Grass:
     def __init__(self):
-        self.image = load_image('grass.png')
+        self.image= load_image('grass.png')
 
     def draw(self):
-        self.image.draw(400, 30)
+        self.image.draw(400,30)
 
 class Boy:
     image = None
-    LEFT_RUN, RIGHT_RUN, LEFT_STAND , RIGHT_STAND = 0 , 1,2,3
 
+    LEFT_RUN, RIGHT_RUN, LEFT_STAND, RIGHT_STAND = 0, 1, 2, 3
 
     def __init__(self):
-       self.x, self.y = random.randint(100, 700), 90
-       self.frame = random.randint(0, 7)
-       self.run_frames = 0
-       self.stand_frames = 0
-       self.state = self.RIGHT_RUN
-       if Boy.image == None:
+        self.x, self.y = random.randint(100, 700), 90
+        self.frame = random.randint(0, 7)
+        self.run_frames = 0
+        self.stand_frames = 0
+        self.state = self.RIGHT_RUN
+        if Boy.image == None:
             Boy.image = load_image('animation_sheet.png')
+
+    def draw(self):
+        self.image.clip_draw(self.frame*100, self.state * 100, 100, 100, self.x, self.y)
 
     def handle_left_run(self):
         self.x -= 5
@@ -40,13 +34,13 @@ class Boy:
         if self.x < 0:
             self.state = self.RIGHT_RUN
             self.x = 0
-        if self.run_frames == 480:
+        if self.run_frames == 280:
             self.state = self.LEFT_STAND
             self.stand_frames = 0
 
     def handle_left_stand(self):
         self.stand_frames += 1
-        if self.stand_frames == 240:
+        if self.stand_frames == 140:
             self.state = self.LEFT_RUN
             self.run_frames = 0
 
@@ -56,52 +50,59 @@ class Boy:
         if self.x > 800:
             self.state = self.LEFT_RUN
             self.x = 800
-        if self.run_frames == 480:
+        if self.run_frames == 280:
             self.state = self.RIGHT_STAND
             self.stand_frames = 0
 
     def handle_right_stand(self):
         self.stand_frames += 1
-        if self.stand_frames == 240:
+        if self.stand_frames == 140:
             self.state = self.RIGHT_RUN
             self.run_frames = 0
 
     handle_state = {
-            LEFT_RUN: handle_left_run,
-            RIGHT_RUN: handle_right_run,
-            LEFT_STAND: handle_left_stand,
-            RIGHT_STAND: handle_left_stand
-        }
+        LEFT_RUN: handle_left_run,
+        RIGHT_RUN: handle_right_run,
+        LEFT_STAND: handle_left_stand,
+        RIGHT_STAND: handle_right_stand
+    }
 
     def update(self):
         self.frame = (self.frame + 1) % 8
         self.handle_state[self.state](self)
 
-    def draw(self):
-        self.image.clip_draw(self.frame *100, self.state * 100, 100, 100, self.x, self.y)
+    def mouse_update(self):
+        self.frame = (self.frame + 1) % 8
+        self.x = mouseX
+        self.y = mouseY
+        self.handle_state[self.state](self)
+
 
 def enter():
-    global boy, grass, team, Tboy, Num, TNum
+    global boy, grass, team, Tboy, mouseX, mouseY, selectedIndex
     boy = Boy()
     grass = Grass()
     team = [Boy() for i in range(1000)]
     Tboy = 0
-    Num = Num()
-    TNum = 0
+    selectedIndex = 0
+    mouseX = 0
+    mouseY = 0
 
 def exit():
-    global boy, grass, team, Tboy, Num,TNum
+    global boy, grass,selectedIndex, team, Tboy,  mouseX, mouseY
     del(boy)
     del(grass)
     del(team)
     del(Tboy)
-    del(Num)
-    del(TNum)
+    del(mouseX)
+    del(mouseY)
+    del(selectedIndex)
 
 def handle_events():
     global mouseX
     global mouseY
-    global boyNum
+    global Tboy
+    global selectedIndex
 
     events = get_events()
 
@@ -113,103 +114,73 @@ def handle_events():
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_0:
                 Tboy = 0
-                TNum = 0
-                if TNum == 0:
-                    Num.image = load_image('0.png')
+
             elif event.key == SDLK_1:
                 Tboy = 1
-                TNum = 1
-                if TNum == 1:
-                    Num.image = load_image('1.png')
+                selectedIndex = 1
             elif event.key == SDLK_2:
                 Tboy = 2
-                TNum = 2
-                if TNum == 2:
-                    Num.image = load_image('2.png')
+                selectedIndex = 2
             elif event.key == SDLK_3:
                 Tboy = 3
-                TNum = 3
-                if TNum == 3:
-                    Num.image = load_image('3.png')
+                selectedIndex = 3
             elif event.key == SDLK_4:
                 Tboy = 4
-                TNum = 4
-                if TNum == 4:
-                    Num.image = load_image('4.png')
+                selectedIndex = 4
+
             elif event.key == SDLK_5:
                 Tboy = 5
-                TNum = 5
-                if TNum == 5:
-                    Num.image = load_image('5.png')
+                selectedIndex = 5
+
             elif event.key == SDLK_6:
                 Tboy = 6
-                TNum = 6
-                if TNum == 6:
-                    Num.image = load_image('6.png')
+                selectedIndex = 6
+
             elif event.key == SDLK_7:
                 Tboy = 7
-                TNum = 7
-                if TNum == 7:
-                    Num.image = load_image('7.png')
+                selectedIndex = 7
+
             elif event.key == SDLK_8:
                 Tboy = 8
-                TNum = 8
-                if TNum == 8:
-                    Num.image = load_image('8.png')
+                selectedIndex = 8
+
             elif event.key == SDLK_9:
                 Tboy = 9
-                TNum = 9
-                if TNum == 9:
-                    Num.image = load_image('9.png')
-            elif event.key == SDLK_F1:
+                selectedIndex = 9
+
+            elif event.key == SDLK_a:
                 Tboy = 10
-                TNum = 10
-                if TNum == 10:
-                    Num.image = load_image('10.png')
+                selectedIndex = 10
+
             elif event.key == SDLK_UP:
-                Tboy
+                Tboy += 1
+                selectedIndex += 1
 
             elif event.key == SDLK_DOWN:
-                Tboy
+                Tboy -= 1
+                selectedIndex -= 1
 
         elif event.type == SDL_MOUSEMOTION:
             mouseX = event.x
             mouseY = 600 - event.y
 
 def update():
-        handle_events()
+    handle_events()
+    if Tboy != None:
+        team[Tboy].mouse_update()
+    for boy in team:
+        boy.update()
 
-        if Tboy != None:
-            team[Tboy].update()
 
-def main():
-
-    open_canvas()
-    boy = Boy()
-    grass = Grass()
-
-    global running
-    running = True
-    while running:
-        handle_events()
-
-        clear_canvas()
-        grass.draw()
-        boy.draw()
-        update_canvas()
-
-        delay(0.05)
-
-    close_canvas()
-
-if __name__ == '__main__':
-    main()
 
 def draw():
     clear_canvas()
     grass.draw()
-    Num.draw()
-    for i in team:
-        if Tboy != None:
-            team[Tboy].draw()
+    if Tboy != None:
+        team[Tboy].draw()
+    for boy in team:
+        boy.draw()
+
+    numbers.draw(selectedIndex + 1, 740, 540)
+
     update_canvas()
