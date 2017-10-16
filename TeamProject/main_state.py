@@ -1,24 +1,24 @@
 import game_framework
 import title_state
+
+from player import Player as myPlayer
+from background import Background as myBackground
 from pico2d import *
 
 name = "TitleState"
 image = None
 
-class Background:
-    def __init__(self):
-        self.image = load_image('Resource/Texture/BG/BG.png')
-
-    def draw(self):
-        self.image.draw(600, 386)
-
 def enter():
+    global player
+    player = myPlayer()
     global background
-    background = Background()
+    background = myBackground()
 
 def exit():
     global background
     del(background)
+    global player
+    del(player)
 
 def handle_events():
     events = get_events()
@@ -27,11 +27,14 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_state(title_state)
+        else:
+            player.handle_events(event)
 
 def update():
-    pass
+    player.update()
 
 def draw():
     clear_canvas()
     background.draw()
+    player.draw()
     update_canvas()
