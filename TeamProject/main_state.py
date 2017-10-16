@@ -3,6 +3,7 @@ import title_state
 
 from player import Player as myPlayer
 from background import Background as myBackground
+from Monster import Monster as myMonster
 from pico2d import *
 
 name = "TitleState"
@@ -13,12 +14,15 @@ def enter():
     player = myPlayer()
     global background
     background = myBackground()
+    global monster
+    monster = myMonster()
 
 def exit():
     global background
     del(background)
     global player
     del(player)
+    del(monster)
 
 def handle_events():
     events = get_events()
@@ -32,9 +36,12 @@ def handle_events():
 
 def update():
     player.update()
+    monster.update()
+
 
 def draw():
     clear_canvas()
     background.draw()
     player.draw()
+    monster.draw()
     update_canvas()

@@ -7,11 +7,11 @@ class Player:
     def __init__(self):
         #global myTransform
         global myTrans
-        self.image = load_image('Resource/Texture/Unit/Base.png')
+        self.image = load_image('Resource/Texture/new_Unit/Player/1.png')
         myTrans = myTransform()
         myTrans.setPos(600, 386)
     def draw(self):
-        self.image.rotate_draw(math.radians(90), myTrans.posX(), myTrans.posY())
+        self.image.draw(myTrans.posX(), myTrans.posY())
 
     def update(self):
         myTrans.update()
@@ -36,7 +36,3 @@ class Player:
                 myTrans.setDirX(0)
             elif event.key == SDLK_d:
                 myTrans.setDirX(0)
-
-
-    def getTransform(self):
-        return myTrans

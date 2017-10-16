@@ -7,3 +7,4 @@ class Background:
         self.y = 386
     def draw(self):
         self.image.draw(self.x, self.y)
+
