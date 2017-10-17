@@ -36,3 +36,9 @@ class Transform:
 
     def setDirY(self, y):
         self.dirY = y
+
+    def dirX(self):
+        return self.dirX
+
+    def dirY(self):
+        return self.dirY
