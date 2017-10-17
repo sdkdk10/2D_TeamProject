@@ -14,6 +14,8 @@ class Monster():
         self.dirX = 0
         self.dirY = 0
         self.speed = 1
+        self.angle = 0
+        self.angleDir = 0
         self.image = load_image('Resource/Texture/new_Unit/Monster/Assassin.png')
         player = myPlayer()
 

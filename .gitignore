@@ -14,3 +14,5 @@ TeamProject/.idea/workspace.xml
 TeamProject/__pycache__/game_framework.cpython-36.pyc
 TeamProject/__pycache__/main_state.cpython-36.pyc
 TeamProject/__pycache__/title_state.cpython-36.pyc
+*.xml
+*.xml

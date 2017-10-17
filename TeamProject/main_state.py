@@ -14,15 +14,15 @@ def enter():
     player = myPlayer()
     global background
     background = myBackground()
-    global monster
-    monster = myMonster()
+    global Monster
+    Monster = myMonster(player)
 
 def exit():
     global background
     del(background)
     global player
     del(player)
-    #del(monster)
+    del(monster)
 
 def handle_events():
     events = get_events()
@@ -36,12 +36,12 @@ def handle_events():
 
 def update():
     player.update()
-    #monster.update()
+    Monster.update()
 
 
 def draw():
     clear_canvas()
     background.draw()
     player.draw()
-    #monster.draw()
+    Monster.draw()
     update_canvas()
