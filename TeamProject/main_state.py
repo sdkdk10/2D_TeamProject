@@ -22,7 +22,7 @@ def exit():
     del(background)
     global player
     del(player)
-    del(monster)
+    #del(monster)
 
 def handle_events():
     events = get_events()
