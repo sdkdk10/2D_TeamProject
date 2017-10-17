@@ -195,15 +195,23 @@ def handle_events():
 
             elif event.key == SDLK_UP:
                 Tboy += 1
+                if Tboy >= 5:
+                    Tboy = 4
+                    selectedIndex = 4
                 selectedIndex += 1
-
             elif event.key == SDLK_DOWN:
                 Tboy -= 1
+                if Tboy <= 0:
+                    Tboy = 1
+                    selectedIndex = 1
                 selectedIndex -= 1
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_UP and Tboy < 5:
-            Tboy += 1
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_DOWN and Tboy > 0:
-            Tboy -= 1
+        #elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
+        #    Tboy += 1
+        #    if Tboy >= 5:
+        #        Tboy = 4
+        #elif event.type == SDL_KEYDOWN and event.key == SDLK_DOWN and Tboy > 0:
+        #    Tboy -= 1
+
         elif event.type == SDL_KEYDOWN or event.type == SDL_KEYUP:
             team[Tboy].handle_event(event)
 
