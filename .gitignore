@@ -8,3 +8,9 @@ homework/sdkdk10/2D_Framework/__pycache__/numbers.cpython-36.pyc
 *.pyc
 *.xml
 *.pyc
+*.xml
+homework/sdkdk10/2D_Framework/.idea/workspace.xml
+TeamProject/.idea/workspace.xml
+TeamProject/__pycache__/game_framework.cpython-36.pyc
+TeamProject/__pycache__/main_state.cpython-36.pyc
+TeamProject/__pycache__/title_state.cpython-36.pyc

@@ -36,12 +36,12 @@ def handle_events():
 
 def update():
     player.update()
-    monster.update()
+    #monster.update()
 
 
 def draw():
     clear_canvas()
     background.draw()
     player.draw()
-    monster.draw()
+    #monster.draw()
     update_canvas()

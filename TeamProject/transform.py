@@ -7,7 +7,7 @@ class Transform:
         self.y = 0
         self.dirX = 0
         self.dirY = 0
-        self.speed = 5
+        self.speed = 1
 
     def translate(self, x, y):
         self.x += x
