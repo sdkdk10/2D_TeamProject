@@ -106,8 +106,9 @@ class Boy:
 
 
 def enter():
-    global team, grass
-    team = [Boy() for i in range(1000)]
+    global grass
+    create_team()
+    #team = [Boy() for i in range(1000)]
     grass = Grass()
 
 def exit():
@@ -145,7 +146,34 @@ def handle_events():
         elif event.type == SDL_MOUSEMOTION:
             mouseX, mouseY = event.x, 600 - event.y
 
+def create_team():
+    player_state_tabel = {
+        "LEFT_RUN" : Boy.LEFT_RUN,
+        "RIGHT_RUN" : Boy.RIGHT_RUN,
+        "LEFT_STAND" : Boy.LEFT_STAND,
+        "RIGHT_STAND" : Boy.RIGHT_STAND
+    }
+
+    team_data_file = open('team_data.txt', 'r')
+    team_data = json.load(team_data_file)
+    team_data_file.close()
+
+    global team
+    team = []
+
+    for name in team_data:
+        player = Boy()
+        player.name = name
+        player.x = team_data[name]['x']
+        player.y = team_data[name]['y']
+        player.state = player_state_tabel[team_data[name]['StartState']]
+        team.append(player)
+
+    return team
+
+
 def update():
+    global team
     for boy in team:
         boy.update()
     delay(0.05)
