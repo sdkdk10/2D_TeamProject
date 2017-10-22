@@ -37,8 +37,11 @@ class Transform:
     def setDirY(self, y):
         self.dirY = y
 
-    def dirX(self):
+    def getDirX(self):
         return self.dirX
 
-    def dirY(self):
+    def getDirY(self):
         return self.dirY
+
+    def setSpeed(self, _speed):
+        self.speed = _speed

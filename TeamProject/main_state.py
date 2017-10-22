@@ -22,7 +22,8 @@ def exit():
     del(background)
     global player
     del(player)
-    del(monster)
+    global Monster
+    del(Monster)
 
 def handle_events():
     events = get_events()
@@ -35,13 +36,15 @@ def handle_events():
             player.handle_events(event)
 
 def update():
+    global player
     player.update()
     Monster.update()
 
 
 def draw():
+    global player
     clear_canvas()
     background.draw()
-    player.draw()
     Monster.draw()
+    player.draw()
     update_canvas()
