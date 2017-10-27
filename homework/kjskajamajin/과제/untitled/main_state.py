@@ -81,8 +81,6 @@ class Boy:
     def draw(self):
         self.image.clip_draw(self.frame*100, self.state * 100, 100, 100, self.x, self.y)
 
-
-
     def update(self):
         self.frame = (self.frame + 1) % 8
         self.handle_state[self.state](self)
@@ -115,9 +113,7 @@ def create_team():
         player.y = team_data[name]['y']
         player.state = player_state_tabel[team_data[name]['StartState']]
         team.append(player)
-
     return team
-
 
 def enter():
     global boy, grass, team, Tboy, mouseX, mouseY, selectedIndex, create_team
@@ -147,7 +143,6 @@ def handle_events():
     global selectedIndex
 
     events = get_events()
-
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
@@ -205,16 +200,8 @@ def handle_events():
                     Tboy = 1
                     selectedIndex = 1
                 selectedIndex -= 1
-        #elif event.type == SDL_KEYDOWN and event.key == SDLK_UP:
-        #    Tboy += 1
-        #    if Tboy >= 5:
-        #        Tboy = 4
-        #elif event.type == SDL_KEYDOWN and event.key == SDLK_DOWN and Tboy > 0:
-        #    Tboy -= 1
-
         elif event.type == SDL_KEYDOWN or event.type == SDL_KEYUP:
             team[Tboy].handle_event(event)
-
         elif event.type == SDL_MOUSEMOTION:
             mouseX = event.x
             mouseY = 600 - event.y
@@ -225,8 +212,6 @@ def update():
         team[Tboy].mouse_update()
     for boy in team:
         boy.update()
-
-
 
 def draw():
     clear_canvas()
