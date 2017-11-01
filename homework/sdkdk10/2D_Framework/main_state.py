@@ -1,8 +1,8 @@
 import game_framework
 import title_state
 import random
-import numbers
 import json
+from background import Background
 
 from pico2d import *
 
@@ -38,7 +38,7 @@ class Boy:
     LEFT_RUN, RIGHT_RUN, LEFT_STAND, RIGHT_STAND = 0, 1, 2, 3
 
     def __init__(self):
-       self.x, self.y = random.randint(100, 700), 90
+       self.x, self.y = 400, 90
        self.frame = random.randint(0, 7)
        self.dir = 1
        self.state = self.RIGHT_RUN
@@ -52,38 +52,6 @@ class Boy:
         distance = Boy.RUN_SPEED_PPS * frame_time
         self.total_frames += Boy.FRAMES_PER_ACTION * Boy.ACTION_PER_TIME * frame_time
         self.frame = int(self.total_frames) % 8
-        self.x += (self.dir * distance)
-
-        if self.x > 960:
-            self.dir = -1
-            self.x = 960
-            self.state = self.LEFT_RUN
-            print("Change Time : %f, Total Frames : %d" % (get_time(), self.total_frames))
-
-        elif self.x < 0:
-            self.dir = 1
-            self.x = 0
-            self.state = self.RIGHT_RUN
-            print("Change Time : %f, Total Frames : %d" % (get_time(), self.total_frames))
-
-
-
-        #self.handle_state[self.state](self)
-        #if self.state == self.RIGHT_RUN:
-        #    self.frame = (self.frame + 1) % 8
-        #    self.x += (self.dir * 5)
-        #elif self.state == self.LEFT_RUN:
-        #    self.frame = (self.frame + 1) % 8
-        #    self.x += (self.dir * 5)
-
-        #if self.x > 800:
-        #    self.dir = -1
-        #    self.x = 800
-        #    self.state = self.LEFT_RUN
-        #elif self.x < 0:
-        #    self.dir = 1
-        #    self.x = 0
-        #    self.state = self.RIGHT_RUN
 
     def draw(self):
         self.image.clip_draw(self.frame * 100, self.state * 100, 100, 100, self.x, self.y)
@@ -132,19 +100,29 @@ class Boy:
         RIGHT_STAND: handle_right_stand
     }
 
+    def handle_event(self, event):
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_LEFT:
+                self.state = self.LEFT_RUN
+            elif event.key == SDLK_RIGHT:
+                self.state = self.RIGHT_RUN
+        if event.type == SDL_KEYUP:
+            if event.key == SDLK_LEFT:
+                self.state = self.LEFT_STAND
+            elif event.key == SDLK_RIGHT:
+                self.state = self.RIGHT_STAND
+
 
 
 def enter():
-    global grass
-    create_team()
-    #team = [Boy() for i in range(1000)]
-    grass = Grass()
+    global grass, boy
+    grass = Background()
+    boy = Boy()
 
 def exit():
-    global team, grass
-    for boy in team:
-        del(boy)
+    global team, grass, boy
     del(grass)
+    del(boy)
 
 
 
@@ -156,24 +134,13 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_state(title_state)
-        elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_SPACE:
-                global curIndex
-                curIndex = 0
-                global boyIndex
-                boyIndex = curIndex
-            elif event.key == SDLK_DOWN:
-                curIndex -= 1
-                if curIndex < 0:
-                    curIndex = 0
-                boyIndex = curIndex
-            elif event.key == SDLK_UP:
-                curIndex += 1
-                if curIndex > 1000:
-                    curIndex = 1000
-                boyIndex = curIndex
         elif event.type == SDL_MOUSEMOTION:
             mouseX, mouseY = event.x, 600 - event.y
+        else:
+            global boy
+            global grass
+            boy.handle_event(event)
+            grass.handle_event(event)
 
 def create_team():
     player_state_tabel = {
@@ -213,10 +180,11 @@ def update():
 
     current_time += frame_time
 
-    for boy in team:
-        boy.update(frame_time)
+    grass.update(frame_time)
 
-    delay(0.05)
+    boy.update(frame_time)
+
+    #delay(0.05)
 
 def draw():
     clear_canvas()
@@ -225,7 +193,5 @@ def draw():
     if boyIndex > 0:
         team[boyIndex].move()
         boyIndex = -1
-    for boy in team:
-        boy.draw()
-    numbers.draw(curIndex + 1, 740, 540)
+    boy.draw()
     update_canvas()
