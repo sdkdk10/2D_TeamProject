@@ -7,11 +7,15 @@ class Player_Bullet:
         global myTrans
         myTrans = myTransform()
         myTrans.setPos(_posX, _posY)
-        myTrans.setDir(_dirX, _dirY)
+        distance = _dirX * _dirX + _dirY * _dirY
+        dirX = _dirX / distance
+        dirY = _dirY / distance
+        myTrans.setDir(dirX, dirY)
+        myTrans.setSpeed(10)
         if Player_Bullet.image == None:
             self.image = load_image('Resource/Texture/Bullet/Basic.png')
 
-    def Update(self):
+    def update(self):
         myTrans.update()
 
     def draw(self):

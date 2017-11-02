@@ -25,9 +25,11 @@ class Player:
             newBull.draw()
 
     def update(self):
-        global mouseX, mouseY
+        global mouseX, mouseY, newBull
         myTrans.update()
         self.angle += self.angleDir
+        if self.angle > 360:
+            self.angle -= 360
         if newBull != None:
             newBull.update()
         #mouseToPlayerX = mouseX - myTrans.posX()
@@ -45,7 +47,7 @@ class Player:
 
     def handle_events(self, event):
         global mouseX, mouseY
-        global myBul
+        global newBull
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_w:
                 myTrans.setDirY(1)
@@ -60,7 +62,7 @@ class Player:
             elif event.key == SDLK_e:
                 self.angleDir = -1
             elif event.key == SDLK_SPACE:
-                newBull = myBullet(myTrans.posX(), myTrans.posY(), myTrans.getDirX(), myTrans.getDirY())
+                newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
                 i = 0
 
 
