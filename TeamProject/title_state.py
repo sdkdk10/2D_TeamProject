@@ -7,7 +7,7 @@ image = None
 
 def enter():
     global image
-    open_canvas(1200, 772, 0)
+    open_canvas(1200, 772,  0)
     image = load_image('Resource/Texture/BG/title.png')
 
 

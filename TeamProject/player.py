@@ -2,14 +2,14 @@ from pico2d import *
 from transform import Transform as myTransform
 from player_bullet import Player_Bullet as myBullet
 
+import player_bullet_mgr
+
 #myTransform = None
 
 class Player:
     def __init__(self):
         global myTrans
         global mouseX, mouseY
-        global newBull
-        newBull = None
         mouseX = 0
         mouseY = 0
         self.image = load_image('Resource/Texture/new_Unit/Player/1.png')
@@ -19,19 +19,14 @@ class Player:
         self.angle = 0
         self.angleDir = 0
     def draw(self):
-        global newBull
         self.image.rotate_draw(math.radians(self.angle), myTrans.posX(), myTrans.posY())
-        if newBull != None:
-            newBull.draw()
 
     def update(self):
-        global mouseX, mouseY, newBull
+        global mouseX, mouseY
         myTrans.update()
         self.angle += self.angleDir
         if self.angle > 360:
             self.angle -= 360
-        if newBull != None:
-            newBull.update()
         #mouseToPlayerX = mouseX - myTrans.posX()
         #mouseToPlayerY = mouseY - myTrans.posY()
         #distance = mouseToPlayerX * mouseToPlayerX + mouseToPlayerY * mouseToPlayerY
@@ -47,7 +42,6 @@ class Player:
 
     def handle_events(self, event):
         global mouseX, mouseY
-        global newBull
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_w:
                 myTrans.setDirY(1)
@@ -63,7 +57,7 @@ class Player:
                 self.angleDir = -1
             elif event.key == SDLK_SPACE:
                 newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
-                i = 0
+                player_bullet_mgr.add_bullet(newBull)
 
 
         if event.type == SDL_KEYUP:

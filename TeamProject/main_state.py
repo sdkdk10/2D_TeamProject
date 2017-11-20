@@ -1,5 +1,6 @@
 import game_framework
 import title_state
+import player_bullet_mgr
 
 from player import Player as myPlayer
 from background import Background as myBackground
@@ -25,6 +26,7 @@ def exit():
     del(player)
     global Monster
     del(Monster)
+    player_bullet_mgr.exit()
 
 def handle_events():
     events = get_events()
@@ -40,6 +42,7 @@ def update():
     global player
     player.update()
     Monster.update()
+    player_bullet_mgr.update()
 
 
 def draw():
@@ -47,5 +50,6 @@ def draw():
     clear_canvas()
     background.draw()
     Monster.draw()
+    player_bullet_mgr.draw()
     player.draw()
     update_canvas()
