@@ -1,35 +1,82 @@
+import json
 from pico2d import *
 
-class Background:
-    SCROLL_SPEED_PPS = 200
-    image = None
-    def __init__(self):
-        if Background.image == None:
-            Background.image = load_image('background.png')
-        self.x = 480
-        self.left = 0
-        self.speed = 0
-        self.screen_width = 960
-        self.screen_height = 272
-        pass
+class TileBackground:
+    SCROLL_SPEED_PPS = 10
+    def __init__(self, filename, width, height):
+        f = open(filename)
+        self.map = json.load(f)
+        self.x = 0
+        self.y = 0
+        self.canvasWidth = width
+        self.canvasHeight = height
+        image_filename = self.map['tilesets'][0]['image']
+        self.image = load_image(image_filename)
+        self.speedX = 0
+        self.speedY = 0
+        self.dirX = 0
+        self.dirY = 0
+        self.bgm = load_music('football.mp3')
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
+        self.pickSound = load_wav('pickup.wav')
+        self.pickSound.set_volume(32)
 
     def draw(self):
-        x = int(self.left)
-        w = min(Background.image.w - x, self.screen_width)
-        Background.image.clip_draw_to_origin(x, 0, w, self.screen_height, 0, 0)
-        Background.image.clip_draw_to_origin(0, 0, self.screen_width - w, self.screen_height, w, 0)
+        tile_per_line = self.map['width']
+        map_height = self.map['height']
+        map_width = self.map['width']
+        data = self.map['layers'][0]['data']
+        tileset = self.map['tilesets'][0]
+        tile_width = tileset['tilewidth']
+        tile_height = tileset['tileheight']
+        margin = tileset['margin']
+        spacing = tileset['spacing']
+        columns = tileset['columns']
 
-    def update(self, frame_time):
-        self.left = (self.left + frame_time * self.speed) % self.image.w
+        self.speedX += TileBackground.SCROLL_SPEED_PPS * self.dirX
+        self.speedY += TileBackground.SCROLL_SPEED_PPS * self.dirY
+
+        rows = -(-tileset['tilecount'] // columns) # math.ceil()
+
+        startx = tile_width // 2 - self.x % tile_width
+        starty = tile_height // 2 - self.y % tile_height
+
+        endx = self.canvasWidth + tile_width // 2
+        endy = self.canvasHeight + tile_height // 2
+
+        desty = starty
+        my = int(self.y // tile_height)
+        while(desty < endy):
+            destx = startx
+            mx = int(self.x // tile_width)
+            while(destx < endx):
+                index = (map_height - my - 1) * map_width - mx
+                tile = data[index]
+                tx = (tile - 1) % columns
+                ty = rows - (tile - 1) // columns - 1
+                srcx = margin + tx * (tile_width + spacing)
+                srcy = margin + ty * (tile_height + spacing)
+                self.image.clip_draw(srcx, srcy, tile_width, tile_height, destx + self.speedX, desty + self.speedY)
+                destx += tile_width
+                mx += 1
+            desty += tile_height
+            my += 1
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_LEFT:
-                self.speed -= Background.SCROLL_SPEED_PPS
-            elif event.key == SDLK_RIGHT:
-                self.speed += Background.SCROLL_SPEED_PPS
+                self.dirX = 1
+                self.pickSound.play()
+            if event.key == SDLK_RIGHT:
+                self.dirX = -1
+            if event.key == SDLK_UP:
+                self.dirY = -1
+            if event.key == SDLK_DOWN:
+                self.dirY = 1
+
         if event.type == SDL_KEYUP:
-            if event.key == SDLK_LEFT:
-                self.speed += Background.SCROLL_SPEED_PPS
-            elif event.key == SDLK_RIGHT:
-                self.speed -= Background.SCROLL_SPEED_PPS
+            if event.key == SDLK_LEFT or event.key == SDLK_RIGHT:
+                self.dirX = 0
+            if event.key == SDLK_UP or event.key == SDLK_DOWN:
+                self.dirY = 0

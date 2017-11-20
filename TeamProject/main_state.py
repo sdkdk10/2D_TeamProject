@@ -9,6 +9,7 @@ from pico2d import *
 name = "TitleState"
 image = None
 
+
 def enter():
     global player
     player = myPlayer()

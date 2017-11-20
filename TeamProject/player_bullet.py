@@ -3,6 +3,7 @@ from pico2d import *
 
 class Player_Bullet:
     image = None
+    stack = None
     def __init__(self, _posX, _posY, _dirX, _dirY):
         global myTrans
         myTrans = myTransform()
@@ -17,6 +18,8 @@ class Player_Bullet:
 
     def update(self):
         myTrans.update()
+        for i in range(Player_Bullet.stack):
+            Player_Bullet.stack[i]
 
     def draw(self):
         self.image.draw(myTrans.posX(), myTrans.posY())

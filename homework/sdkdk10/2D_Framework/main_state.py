@@ -2,7 +2,8 @@ import game_framework
 import title_state
 import random
 import json
-from background import Background
+import cProfile
+#from background import Background
 
 from pico2d import *
 
@@ -28,11 +29,118 @@ class Background:
         x = int(self.left)
         w = min(self.image.w - x, self.screen_width)
         self.image.clip_draw_to_origin(x, 0, w, self.screen_height, 0, 0)
-        self.image.clip_draw_to_origin(0,0, self.screen_width-w, self.screen_height, w,0)
+        self.image.clip_draw_to_origin(0,0, self.screen_width, self.screen_height, w,0)
 
     def update(self, frame_time):
         self.left= (self.left + frame_time * self.speed) % self.image.w
 
+
+class TileBackground:
+    SCROLL_SPEED_PPS = 10
+
+    def __init__(self, filename, width, height):
+        f = open(filename)
+        self.map = json.load(f)
+        self.x = 0
+        self.y = 0
+        self.canvasWidth = width
+        self.canvasHeight = height
+        image_filename = self.map['tilesets'][0]['image']
+        self.image = load_image(image_filename)
+        self.speedX = 0
+        self.speedY = 0
+        self.dirX = 0
+        self.dirY = 0
+        self.bgm = load_music('football.mp3')
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
+        self.pickSound = load_wav('pickup.wav')
+        self.pickSound.set_volume(32)
+
+    def draw(self):
+        tile_per_line = self.map['width']
+        map_height = self.map['height']
+        map_width = self.map['width']
+        data = self.map['layers'][0]['data']
+        tileset = self.map['tilesets'][0]
+        tile_width = tileset['tilewidth']
+        tile_height = tileset['tileheight']
+        margin = tileset['margin']
+        spacing = tileset['spacing']
+        columns = tileset['columns']
+
+        self.speedX += TileBackground.SCROLL_SPEED_PPS * self.dirX
+        self.speedY += TileBackground.SCROLL_SPEED_PPS * self.dirY
+        #------------------------------------------------------
+        rows = -(-tileset['tilecount'] // columns) # math.ceil()
+
+        startx = tile_width // 2 - self.x % tile_width
+        starty = tile_height // 2 - self.y % tile_height
+
+        endx = self.canvasWidth + tile_width // 2
+        endy = self.canvasHeight + tile_height // 2
+
+        desty = starty
+        my = int(self.y // tile_height)
+        while(desty < endy):
+            destx = startx
+            mx = int(self.x // tile_width)
+            while(destx < endx):
+                index = (map_height - my - 1) * map_width - mx
+                tile = data[index]
+                tx = (tile - 1) % columns
+                ty = rows - (tile - 1) // columns - 1
+                srcx = margin + tx * (tile_width + spacing)
+                srcy = margin + ty * (tile_height + spacing)
+                self.image.clip_draw(srcx, srcy, tile_width, tile_height, destx + self.speedX, desty + self.speedY)
+                destx += tile_width
+                mx += 1
+            desty += tile_height
+            my += 1
+
+        #------------------------------------------------------
+
+        #dx, dy = 0 + tile_width / 2, 0 + tile_height / 2
+        #desty = dy
+        #print("========================")
+        #y = 0
+        #while(desty < self.canvasHeight):
+        #    destx = dx
+        #    x = 0
+        #    while(destx < self.canvasWidth):
+        #        index = (map_height - y - 1) * tile_per_line + x
+        #        tile = data[index]
+        #        tx = (tile - 1) % columns
+        #        ty = (tile - 1) // columns
+        #        srcx = margin + tx * (tile_width + spacing)
+        #        srcy = self.image.h - (margin + ty * (tile_height + spacing))
+        #        #(srcx, srcy, tile_width, tile_height)
+        #        #(destx, desty)
+        #        self.image.clip_draw(srcx, srcy, tile_width, tile_height, destx, desty)
+        #        destx += tile_width
+        #        print(x, y, index, tile, srcx, srcy, destx, desty)
+        #        x + 1
+        #    desty += tile_height
+        #    y + 1
+
+    def handle_event(self, event):
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_LEFT:
+                self.dirX = 1
+                self.pickSound.play()
+            if event.key == SDLK_RIGHT:
+                self.dirX = -1
+            if event.key == SDLK_UP:
+                self.dirY = -1
+            if event.key == SDLK_DOWN:
+                self.dirY = 1
+
+        if event.type == SDL_KEYUP:
+            if event.key == SDLK_LEFT or event.key == SDLK_RIGHT:
+                self.dirX = 0
+            if event.key == SDLK_UP or event.key == SDLK_DOWN:
+                self.dirY = 0
+#
 class Boy:
     PIXEL_PER_METER = (10.0 / 0.3)          #10 pixel 30 cm
     RUN_SPEED_KMPH = 20.0                   # Km / Hour
@@ -122,12 +230,48 @@ class Boy:
             elif event.key == SDLK_RIGHT:
                 self.state = self.RIGHT_STAND
 
+class Button:
+    def __init__(self, imageFilename, x = 0, y = 0):
+        self.image = load_image(imageFilename)
+        self.x, self.y = x, y
 
+    def draw(self):
+        self.image.draw(self.x, self.y)
+
+    def handle_event(self, event):
+        if event.type == SDL_MOUSEMOTION:
+            if(self.ptInRect(mouse.x, mouse.y)):
+                self.onOver()
+
+    def onOver(self):
+        print("on Over")
+
+    def ptInRect(self, x, y):
+        if(x < self.x - self.image.w / 2):
+            return False
+        if(x > self.x + self.image.w / 2):
+            return False
+        if(y < self.y - self.image.h / 2):
+            return False
+        if(y > self.y + self.image.h / 2):
+            return False
+        return True
 
 def enter():
     global grass, boy
-    grass = Background()
+    grass = TileBackground('map.json', 800, 600)
     boy = Boy()
+    global button, button2
+    button = uif.Button('insta.png', 400, 300)
+    button.onOver = onBtnInsta
+    button2 = uif.Button('twit.png', 600, 300)
+    button2.onOver = onBtnTwit
+
+def onBtnInsta():
+    print("On Insta")
+
+def onBtnTwit():
+    print("On Twit")
 
 def exit():
     global team, grass, boy
@@ -149,7 +293,7 @@ def handle_events():
         else:
             global boy
             global grass
-            boy.handle_event(event)
+            #boy.handle_event(event)
             grass.handle_event(event)
 
 def create_team():
@@ -180,28 +324,30 @@ def create_team():
 global current_time
 current_time = get_time()
 
+
+
 def update():
-    global team
-    global current_time
+    #global team
+    #global current_time
+#
+    #frame_time = get_time() - current_time
+    #frame_rate = 1.0 / frame_time
+    #print("Frame Rate : %f fps, Frame Time : %f sec, " %(frame_rate, frame_time))
+#
+    #current_time += frame_time
+#
+    #grass.update(frame_time)
+#
+    #boy.update(frame_time)
 
-    frame_time = get_time() - current_time
-    frame_rate = 1.0 / frame_time
-    print("Frame Rate : %f fps, Frame Time : %f sec, " %(frame_rate, frame_time))
-
-    current_time += frame_time
-
-    grass.update(frame_time)
-
-    boy.update(frame_time)
-
-    #delay(0.05)
+    delay(0.3)
 
 def draw():
     clear_canvas()
     grass.draw()
-    global boyIndex
-    if boyIndex > 0:
-        team[boyIndex].move()
-        boyIndex = -1
-    boy.draw()
+    #global boyIndex
+    #if boyIndex > 0:
+    #    team[boyIndex].move()
+    #    boyIndex = -1
+    ##boy.draw()
     update_canvas()
