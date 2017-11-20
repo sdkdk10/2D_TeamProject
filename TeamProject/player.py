@@ -16,8 +16,10 @@ class Player:
         myTrans = myTransform()
         myTrans.setPos(600, 386)
         myTrans.setSpeed(2)
+        #myTrans.setSize(self.image.w, self.image.h)
         self.angle = 0
         self.angleDir = 0
+
     def draw(self):
         self.image.rotate_draw(math.radians(self.angle), myTrans.posX(), myTrans.posY())
 

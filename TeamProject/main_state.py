@@ -18,6 +18,7 @@ def enter():
     background = myBackground()
     global Monster
     Monster = myMonster(player)
+    player_bullet_mgr.enter(Monster)
 
 def exit():
     global background

@@ -8,6 +8,8 @@ class Transform:
         self.dirX = 0
         self.dirY = 0
         self.speed = 1
+        self.sizeX = 0
+        self.sizeY = 0
 
     def translate(self, x, y):
         self.x += x
@@ -45,3 +47,13 @@ class Transform:
 
     def setSpeed(self, _speed):
         self.speed = _speed
+
+    def setSize(self, _x, _y):
+        self.sizeX = _x
+        self.sizeY = _y
+
+    def sizeX(self):
+        return self.sizeX
+
+    def sizeY(self):
+        return self.sizeY

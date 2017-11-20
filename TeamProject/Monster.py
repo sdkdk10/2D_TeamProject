@@ -6,9 +6,14 @@ from random import *
 
 class Monster():
     def __init__(self, _player):
-        global myTrans
         global Distance
         global player
+        #-----------------By. JH----------------------
+        self.myTrans = myTransform()
+        self.myTrans.setPos(300, 300)
+        self.myTrans.setDir(0, 0)
+        self.myTrans.setSpeed(1)
+
         self.x = 300
         self.y = 300
         self.dirX = 0
@@ -17,19 +22,29 @@ class Monster():
         self.angle = 0
         self.angleDir = 0
         self.image = load_image('Resource/Texture/new_Unit/Monster/Assassin.png')
+        #self.myTrans.setSize(self.image.w, self.image.h)`
         player = myPlayer()
 
     def draw(self):
-        self.image.draw(self.posX(), self.posY())
+        #self.image.draw(self.posX(), self.posY())
+        self.image.draw(self.myTrans.posX(), self.myTrans.posY())
 
     def update(self):
-        self.dirX = player.getTransform().x - self.x
-        self.dirY = player.getTransform().y - self.y
+        #self.dirX = player.getTransform().x - self.x
+        #self.dirY = player.getTransform().y - self.y
+
+        self.dirX = player.getTransform().x - self.myTrans.posX()
+        self.dirY = player.getTransform().y - self.myTrans.posY()
         Distance = math.sqrt(self.dirX * self.dirX + self.dirY * self.dirY)
         self.dirX /= Distance
         self.dirY /= Distance
-        self.x += self.dirX * self.speed
-        self.y += self.dirY * self.speed
+        self.myTrans.setDir(self.dirX, self.dirY)
+        self.myTrans.update()
+        #self.x += self.dirX * self.speed
+        #self.y += self.dirY * self.speed
+
+    def getTransform(self):
+        return self.myTrans
 
     def setPos(self, x, y):
         self.x = x
