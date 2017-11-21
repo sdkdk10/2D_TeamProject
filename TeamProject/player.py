@@ -14,21 +14,38 @@ class Player:
         mouseY = 0
         self.image = load_image('Resource/Texture/new_Unit/Player/1.png')
         myTrans = myTransform()
-        myTrans.setPos(600, 386)
+        myTrans.setPos(1000, 500)
         myTrans.setSpeed(2)
-        #myTrans.setSize(self.image.w, self.image.h)
+        myTrans.setSize(self.image.w, self.image.h)
         self.angle = 0
         self.angleDir = 0
+        self.background = None
+        self.scrollX = 0
+        self.scrollY = 0
+
+    def set_background(self, _background):
+        self.background = _background
 
     def draw(self):
-        self.image.rotate_draw(math.radians(self.angle), myTrans.posX(), myTrans.posY())
+        global myTrans
+        self.scrollX = myTrans.posX() - self.background.window_left
+        self.scrollY = myTrans.posY() - self.background.window_bottom
+        X = myTrans.posX()
+        Y = myTrans.posY()
+        self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
+        print('Player : x = %d, y = %d' % (X, Y))
+        print('SX : %d sY : %d' % (self.scrollX, self.scrollY))
+
 
     def update(self):
-        global mouseX, mouseY
-        myTrans.update()
+        global myTrans
         self.angle += self.angleDir
         if self.angle > 360:
             self.angle -= 360
+        myTrans.update()
+        posX = clamp(0, myTrans.posX(), self.background.w)
+        posY = clamp(0, myTrans.posY(), self.background.h)
+        myTrans.setPos(posX, posY)
         #mouseToPlayerX = mouseX - myTrans.posX()
         #mouseToPlayerY = mouseY - myTrans.posY()
         #distance = mouseToPlayerX * mouseToPlayerX + mouseToPlayerY * mouseToPlayerY
@@ -43,6 +60,7 @@ class Player:
 
 
     def handle_events(self, event):
+        global myTrans
         global mouseX, mouseY
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_w:
@@ -58,7 +76,8 @@ class Player:
             elif event.key == SDLK_e:
                 self.angleDir = -1
             elif event.key == SDLK_SPACE:
-                newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
+                #newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
+                newBull = myBullet(self.scrollX, self.scrollY, math.cos(math.radians(self.angle)),math.sin(math.radians(self.angle)))
                 player_bullet_mgr.add_bullet(newBull)
 
 
@@ -80,4 +99,11 @@ class Player:
             mouseX, mouseY = event.x, 600 - event.y
 
     def getTransform(self):
+        global myTrans
         return myTrans
+
+    def getScrollX(self):
+        return self.scrollX
+
+    def getScrollY(self):
+        return self.scrollY

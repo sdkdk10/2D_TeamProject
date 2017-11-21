@@ -6,11 +6,11 @@ from player import Player as myPlayer
 from background import Background as myBackground
 from Monster import Monster as myMonster
 from ExpBox import ExpBox as myExpBox
-
 from pico2d import *
 
 name = "TitleState"
 image = None
+
 
 def enter():
     global player
@@ -19,14 +19,14 @@ def enter():
     team = [myMonster(player) for i in range(10)]
     global background
     background = myBackground()
+    background.set_center_object(player)
+    player.set_background(background)
     global Monster
     Monster = myMonster(player)
-    global ExpBox
-    ExpBox = myExpBox(player)
+    player_bullet_mgr.enter(Monster)
     global team1
     team1 = [myExpBox(player) for i in range(500)]
     player_bullet_mgr.enter(Monster)
-
 
 def exit():
     global background
@@ -35,13 +35,11 @@ def exit():
     del(player)
     global Monster
     del(Monster)
-    global ExpBox
-    del(ExpBox)
-    global team
-    del team
-    global team1
-    del team1
     player_bullet_mgr.exit()
+    for i in range(team):
+        del(team[i])
+    for i in range(team1):
+        del(team1[i])
 
 def handle_events():
     events = get_events()
@@ -54,16 +52,18 @@ def handle_events():
             player.handle_events(event)
 
 def update():
-    global player
+    global player, background
     player.update()
+    background.update()
     for monster_team in team:
         monster_team.update()
     for expBox_team in team1:
         expBox_team.update()
     player_bullet_mgr.update()
 
+
 def draw():
-    global player
+    global player, background
     clear_canvas()
     background.draw()
     for monster_team in team:

@@ -13,7 +13,7 @@ class Player_Bullet:
         dirY = _dirY / distance
         self.myTrans.setDir(dirX, dirY)
         self.myTrans.setSpeed(10)
-        #self.myTrans.setSize(25, 25)
+        self.myTrans.setSize(25, 25)
         if Player_Bullet.image == None:
             self.image = load_image('Resource/Texture/Bullet/Basic.png')
 

@@ -52,8 +52,8 @@ class Transform:
         self.sizeX = _x
         self.sizeY = _y
 
-    def sizeX(self):
+    def getSizeX(self):
         return self.sizeX
 
-    def sizeY(self):
+    def getSizeY(self):
         return self.sizeY
