@@ -6,9 +6,10 @@ import random
 class ExpBox:
     def __init__(self, _player):
         global state
+        global background
         state = random.randint(1,3)
         self.myTrans = myTransform()
-        self.myTrans.setPos(random.randint(0, 5000), random.randint(0, 5000))
+        self.myTrans.setPos(random.randint(0, 5000), random.randint(100, 5000))
         self.myTrans.setDir(1, 1)
         self.myTrans.setSpeed(0.005)
         self.x = 300
@@ -22,8 +23,16 @@ class ExpBox:
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Triangle1.png')
         elif(state == 3):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Rectangle1.png')
+
+    def set_background(self, _bg):
+        global background
+        background = _bg
     def draw(self):
-        self.image.draw(self.myTrans.posX(), self.myTrans.posY())
+        global background
+        sx = self.myTrans.posX() - background.window_left
+        sy = self.myTrans.posY() - background.window_bottom
+        #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
+        self.image.draw(sx, sy)
 
     def update(self):
         self.myTrans.setDir(random.randint(1,3), random.randint(1,3))
@@ -59,5 +68,4 @@ class ExpBox:
 
     def dirY(self):
         return self.dirY
-
 

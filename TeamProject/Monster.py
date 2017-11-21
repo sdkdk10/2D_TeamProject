@@ -40,9 +40,6 @@ class Monster():
         self.image.draw(self.myTrans.posX(), self.myTrans.posY())
 
     def update(self):
-        #self.dirX = player.getTransform().x - self.x
-        #self.dirY = player.getTransform().y - self.y
-
         self.dirX = player.getScrollX() - self.myTrans.posX()
         self.dirY = player.getScrollY() - self.myTrans.posY()
         Distance = math.sqrt(self.dirX * self.dirX + self.dirY * self.dirY)

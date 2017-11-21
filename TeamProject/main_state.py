@@ -24,8 +24,11 @@ def enter():
     global Monster
     Monster = myMonster(player)
     player_bullet_mgr.enter(Monster)
+
     global team1
     team1 = [myExpBox(player) for i in range(500)]
+    for i in team1:
+        i.set_background(background)
     player_bullet_mgr.enter(Monster)
 
 def exit():
@@ -40,6 +43,7 @@ def exit():
         del(team[i])
     for i in range(team1):
         del(team1[i])
+
 
 def handle_events():
     events = get_events()
