@@ -2,28 +2,37 @@ from pico2d import *
 from transform import Transform as myTransform
 #import player
 from player import Player as myPlayer
-from random import *
+import random
 
 class Monster():
     def __init__(self, _player):
         global Distance
         global player
+        global state
+        state = random.randint(1,3)
         #-----------------By. JH----------------------
         self.myTrans = myTransform()
-        self.myTrans.setPos(300, 300)
+        self.myTrans.setPos(random.randint(100, 700), random.randint(100, 700))
         self.myTrans.setDir(0, 0)
-        self.myTrans.setSpeed(1)
+        self.myTrans.setSpeed(0.5)
 
         self.x = 300
         self.y = 300
         self.dirX = 0
         self.dirY = 0
-        self.speed = 1
+        self.speed = 0.5
         self.angle = 0
         self.angleDir = 0
         self.image = load_image('Resource/Texture/new_Unit/Monster/Assassin.png')
         self.myTrans.setSize(self.image.w, self.image.h)
         #player = myPlayer()
+        if (state == 1):
+            self.image = load_image('Resource/Texture/new_Unit/Monster/Assassin.png')
+        elif (state == 2):
+            self.image = load_image('Resource/Texture/new_Unit/Monster/Booster.png')
+        elif (state == 3):
+            self.image = load_image('Resource/Texture/new_Unit/Monster/Overtrapper.png')
+
         player = _player
 
     def draw(self):

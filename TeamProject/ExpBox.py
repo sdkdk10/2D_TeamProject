@@ -8,7 +8,7 @@ class ExpBox:
         global state
         state = random.randint(1,3)
         self.myTrans = myTransform()
-        self.myTrans.setPos(random.randint(0, 5000), random.randint(100, 5000))
+        self.myTrans.setPos(random.randint(0, 5000), random.randint(0, 5000))
         self.myTrans.setDir(1, 1)
         self.myTrans.setSpeed(0.005)
         self.x = 300
