@@ -10,3 +10,14 @@ def collision_distance(src, dest):
         return True
     return False
 
+def collision_distance(srcX, srcY, srcSize, destX, destY, destSize):
+    disX = srcX - destX
+    disY = srcY - destY
+    distance = math.sqrt(disX * disX + disY * disY)
+    size = srcSize + destSize
+
+    size /= 2
+
+    if distance < size:
+        return True
+    return False

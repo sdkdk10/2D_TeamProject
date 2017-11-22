@@ -15,21 +15,21 @@ image = None
 def enter():
     global player
     player = myPlayer()
-    global team
-    team = [myMonster(player) for i in range(10)]
     global background
     background = myBackground()
     background.set_center_object(player)
     player.set_background(background)
+    global team
+    team = [myMonster(player, background) for i in range(100)]
     global Monster
-    Monster = myMonster(player)
+    Monster = myMonster(player, background)
     player_bullet_mgr.enter(Monster)
-
     global team1
     team1 = [myExpBox(player) for i in range(500)]
+
     for i in team1:
         i.set_background(background)
-    player_bullet_mgr.enter(Monster)
+        player_bullet_mgr.add_Monster(i)
 
 def exit():
     global background
@@ -43,7 +43,6 @@ def exit():
         del(team[i])
     for i in range(team1):
         del(team1[i])
-
 
 def handle_events():
     events = get_events()

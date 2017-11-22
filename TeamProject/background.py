@@ -25,7 +25,7 @@ class Background:
         self.window_bottom = clamp(0, int(objectPosY) - self.canvas_height // 2, self.h - self.canvas_height)
         #self.window_left = int(objectPosX) - self.canvas_width // 2
         #self.window_bottom = int(objectPosY) - self.canvas_height // 2
-        print('BackGround : window_left = %d, window_bottom = %d' % (self.window_left, self.window_bottom))
+        #print('BackGround : window_left = %d, window_bottom = %d' % (self.window_left, self.window_bottom))
 
     def set_center_object(self, _object):
         self.center_object = _object

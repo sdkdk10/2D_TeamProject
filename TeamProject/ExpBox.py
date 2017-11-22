@@ -17,12 +17,16 @@ class ExpBox:
         self.dirX = 1
         self.dirY = 1
         self.speed = 1
+        self.scrollX = 0
+        self.scrollY = 0
         if (state == 1):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Pentagon1.png')
         elif(state == 2):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Triangle1.png')
         elif(state == 3):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Rectangle1.png')
+
+        self.myTrans.setSize(self.image.w, self.image.h)
 
     def set_background(self, _bg):
         global background
@@ -31,6 +35,8 @@ class ExpBox:
         global background
         sx = self.myTrans.posX() - background.window_left
         sy = self.myTrans.posY() - background.window_bottom
+        self.scrollX = sx
+        self.scrollY = sy
         #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
         self.image.draw(sx, sy)
 
@@ -68,4 +74,15 @@ class ExpBox:
 
     def dirY(self):
         return self.dirY
+
+    def getScrollX(self):
+        return self.scrollX
+
+    def getScrollY(self):
+        return self.scrollY
+
+
+    def getTransform(self):
+        return self.myTrans
+
 

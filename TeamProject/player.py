@@ -33,8 +33,8 @@ class Player:
         X = myTrans.posX()
         Y = myTrans.posY()
         self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
-        print('Player : x = %d, y = %d' % (X, Y))
-        print('SX : %d sY : %d' % (self.scrollX, self.scrollY))
+        #print('Player : x = %d, y = %d' % (X, Y))
+        #print('SX : %d sY : %d' % (self.scrollX, self.scrollY))
 
 
     def update(self):
@@ -77,7 +77,7 @@ class Player:
                 self.angleDir = -1
             elif event.key == SDLK_SPACE:
                 #newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
-                newBull = myBullet(self.scrollX, self.scrollY, math.cos(math.radians(self.angle)),math.sin(math.radians(self.angle)))
+                newBull = myBullet(self.scrollX, self.scrollY, math.cos(math.radians(self.angle)),math.sin(math.radians(self.angle)), self)
                 player_bullet_mgr.add_bullet(newBull)
 
 
