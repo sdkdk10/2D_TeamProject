@@ -18,6 +18,7 @@ class Player_Bullet:
         self.myTrans.setDir(dirX, dirY)
         self.myTrans.setSpeed(10)
         self.myTrans.setSize(25, 25)
+        self.isDead = False
         if player == None:
             player = _player
         if Player_Bullet.image == None:
@@ -26,23 +27,34 @@ class Player_Bullet:
         self.count = 0
 
     def update(self):
+        global player
         self.myTrans.update()
-        #if Player_Bullet.monster != None:
-        #    if collision.collision_distance(self.myTrans, Player_Bullet.monster.getTransform()) == True:
-        #        print("Collision!!")
 
         stacklen = len(player_bullet_mgr.expMonster)
         for i in range(stacklen):
-            mon = player_bullet_mgr.expMonster[i]
-            if collision.collision_distance(self.myTrans.posX(), self.myTrans.posY(), self.myTrans.sizeX, mon.getScrollX(), mon.getScrollY(), mon.getTransform().sizeX) == True:
+            expmon = player_bullet_mgr.expMonster[i]
+            if collision.collision_distance_A(self, expmon) == True:
                 print("Collision")
+                self.isDead = True
+                player.setExp(5)
+                return 1
+
+        stacklen_mon = len(player_bullet_mgr.monster)
+        for i in range(stacklen_mon):
+            mon = player_bullet_mgr.monster[i]
+            if collision.collision_distance_A(self, mon) == True:
+                print("Monster Collision")
+                self.isDead = True
+                player.setExp(10)
                 return 1
 
         self.count += 1
         #print(self.count)
         if self.count > 50:
+            self.isDead = True
             return 1
 
+        self.isDead = False
         return 0
 
     def draw(self):
@@ -54,3 +66,15 @@ class Player_Bullet:
     def setMonster(self, monster):
         if Player_Bullet.monster == None:
             Player_Bullet.monster = monster
+
+    def setIsDead(self, bDead):
+        self.isDead = bDead
+
+    def getIsDead(self):
+        return self.isDead
+
+    def colX(self):
+        return self.myTrans.posX()
+
+    def colY(self):
+        return self.myTrans.posY()

@@ -6,6 +6,9 @@ global expMonster
 expMonster = None
 global player
 
+global update_bullet
+update_bullet = None
+
 def enter(_monster):
     global monster
     monster = _monster
@@ -24,8 +27,6 @@ def add_bullet(bullet):
     if bulletStack == None:
         bulletStack = [bullet]
     else:
-        #len = len(bulletStack)
-        #bulletStack[len] = bullet
         bulletStack.append(bullet)
 
     bullet.setMonster(monster)
@@ -34,37 +35,37 @@ def setPlayer(_player):
     global player
     player = _player
 
+def setExpMonster(_exp):
+    global expMonster
+    expMonster = _exp
+
+def setMonster(_monster):
+    global monster
+    monster = _monster
+
 def update():
     global bulletStack
-    if bulletStack != None:
-        stacklen = len(bulletStack)
-        for i in range(stacklen):
-            if bulletStack[i].update() == 1:
-                #del(bulletStack[i])
-                bulletStack.pop(i)
-        #iterator = iter(bulletStack)
-        #for bullet in iterator:
-        #    if bullet.update() == 1:
-        #        print("delete()")
-        #        del(bullet)
+    global update_bullet
 
+    if bulletStack != None:
+        update_bullet = [b for b in bulletStack if b.getIsDead() == False]
+
+    if update_bullet != None:
+        stacklen = len(update_bullet)
+        for i in range(stacklen):
+            update_bullet[i].update()
 
 
 
 def draw():
-    global bulletStack
-    if bulletStack != None:
-        #stacklen = len(bulletStack)
-        #for i in range(stacklen):
-        #    bulletStack[i].draw()
-        iterator = iter(bulletStack)
-        for bullet in iterator:
-            #if bullet.getTransform().posX()
-            bullet.draw()
+    global update_bullet
+    if update_bullet != None:
+        stacklen = len(update_bullet)
+        for i in range(stacklen):
+            update_bullet[i].draw()
 
 def exit():
     global bulletStack
     if bulletStack != None:
-        stacklen = len(bulletStack)
-        for i in range(stacklen):
-            del(bulletStack[i])
+        for delbullet in bulletStack:
+            del(delbullet)

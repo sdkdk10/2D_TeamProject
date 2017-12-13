@@ -19,6 +19,7 @@ class ExpBox:
         self.speed = 1
         self.scrollX = 0
         self.scrollY = 0
+        self.isDead = False
         if (state == 1):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Pentagon1.png')
         elif(state == 2):
@@ -31,20 +32,20 @@ class ExpBox:
     def set_background(self, _bg):
         global background
         background = _bg
+
     def draw(self):
-        global background
-        sx = self.myTrans.posX() - background.window_left
-        sy = self.myTrans.posY() - background.window_bottom
-        self.scrollX = sx
-        self.scrollY = sy
-        #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
-        self.image.draw(sx, sy)
+        self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
         self.myTrans.setDir(random.randint(1,3), random.randint(1,3))
         self.myTrans.update()
         self.x += self.dirX * self.speed
         self.y += self.dirY * self.speed
+        global background
+        sx = self.myTrans.posX() - background.window_left
+        sy = self.myTrans.posY() - background.window_bottom
+        self.scrollX = sx
+        self.scrollY = sy
 
     def getTransform(self):
         return self.myTrans
@@ -84,5 +85,24 @@ class ExpBox:
 
     def getTransform(self):
         return self.myTrans
+
+    def isInWindow(self):
+        if self.scrollX > 0 and self.scrollX < get_canvas_width():
+            if self.scrollY > 0 and self.scrollY < get_canvas_height():
+                return True
+        return False
+
+
+    def colX(self):
+        return self.scrollX
+
+    def colY(self):
+        return self.scrollY
+
+    def setIsDead(self, bDead):
+        self.isDead = bDead
+
+    def getIsDead(self):
+        return self.isDead
 
 

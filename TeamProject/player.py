@@ -22,9 +22,18 @@ class Player:
         self.background = None
         self.scrollX = 0
         self.scrollY = 0
+        self.hpUi = None
+        self.expUI = None
+        self.exp = 0
 
     def set_background(self, _background):
         self.background = _background
+
+    def setHpUI(self, _ui):
+        self.hpUI = _ui
+
+    def setExpUI(self, _ui):
+        self.expUI = _ui
 
     def draw(self):
         global myTrans
@@ -46,17 +55,6 @@ class Player:
         posX = clamp(0, myTrans.posX(), self.background.w)
         posY = clamp(0, myTrans.posY(), self.background.h)
         myTrans.setPos(posX, posY)
-        #mouseToPlayerX = mouseX - myTrans.posX()
-        #mouseToPlayerY = mouseY - myTrans.posY()
-        #distance = mouseToPlayerX * mouseToPlayerX + mouseToPlayerY * mouseToPlayerY
-        #mouseToPlayerX /= distance
-        #mouseToPlayerY /= distance
-#
-        #dot = mouseToPlayerX * mouseToPlayerX + mouseToPlayerY * mouseToPlayerY
-        #if dot != 0:
-        #    self.angle = math.acos(dot)
-        #if myTrans.posY() <= mouseY:
-        #    self.angle = 360 - self.angle
 
 
     def handle_events(self, event):
@@ -76,7 +74,6 @@ class Player:
             elif event.key == SDLK_e:
                 self.angleDir = -1
             elif event.key == SDLK_SPACE:
-                #newBull = myBullet(myTrans.posX(), myTrans.posY(), math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle)))
                 newBull = myBullet(self.scrollX, self.scrollY, math.cos(math.radians(self.angle)),math.sin(math.radians(self.angle)), self)
                 player_bullet_mgr.add_bullet(newBull)
 
@@ -107,3 +104,7 @@ class Player:
 
     def getScrollY(self):
         return self.scrollY
+
+    def setExp(self, _exp):
+        self.exp += _exp
+        self.expUI.SetCurScore(_exp)

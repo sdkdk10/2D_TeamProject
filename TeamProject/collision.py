@@ -1,12 +1,16 @@
 from pico2d import *
 
-def collision_distance(src, dest):
-    disX = src.posX() - dest.posX()
-    disY = src.posY() - dest.posY()
+def collision_distance_A(src, dest):
+    disX = src.colX() - dest.colX()
+    disY = src.colY() - dest.colY()
     distance = math.sqrt(disX * disX + disY * disY)
-    size = src.getSizeX() + dest.getSizeX()
+    size = src.getTransform().getSizeX() + dest.getTransform().getSizeX()
+
+    size /= 2
 
     if distance < size:
+        dest.setIsDead(True)
+        src.setIsDead(True)
         return True
     return False
 

@@ -26,6 +26,7 @@ class Monster():
         self.angleDir = 0
         self.scrollX = 0
         self.scrollY = 0
+        self.isDead = False
         self.image = load_image('Resource/Texture/new_Unit/Monster/Assassin.png')
         self.myTrans.setSize(self.image.w, self.image.h)
         #player = myPlayer()
@@ -34,10 +35,6 @@ class Monster():
 
 
     def draw(self):
-        #self.image.draw(self.posX(), self.posY())
-        self.scrollX = self.myTrans.posX() - bg.window_left
-        self.scrollY = self.myTrans.posY() - bg.window_bottom
-        #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
         self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
@@ -57,6 +54,8 @@ class Monster():
             self.dirY /= Distance
         self.myTrans.setDir(self.dirX, self.dirY)
         self.myTrans.update()
+        self.scrollX = self.myTrans.posX() - bg.window_left
+        self.scrollY = self.myTrans.posY() - bg.window_bottom
         #self.x += self.dirX * self.speed
         #self.y += self.dirY * self.speed
 
@@ -89,4 +88,26 @@ class Monster():
     def dirY(self):
         return self.dirY
 
+    def getScrollX(self):
+        return self.scrollX
 
+    def getScrollY(self):
+        return self.scrollY
+
+    def isInWindow(self):
+        if self.scrollX > 0 and self.scrollX < get_canvas_width():
+            if self.scrollY > 0 and self.scrollY < get_canvas_height():
+                return True
+        return False
+
+    def colX(self):
+        return self.scrollX
+
+    def colY(self):
+        return self.scrollY
+
+    def setIsDead(self, bDead):
+        self.isDead = bDead
+
+    def getIsDead(self):
+        return self.isDead
