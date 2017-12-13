@@ -1,5 +1,5 @@
 from pico2d import *
-from PIL import Image
+#from PIL import Image
 
 class UI_Black:
     image = None

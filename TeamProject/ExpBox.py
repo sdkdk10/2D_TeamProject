@@ -19,6 +19,7 @@ class ExpBox:
         self.speed = 1
         self.scrollX = 0
         self.scrollY = 0
+        self.angle = 0
         self.isDead = False
         if (state == 1):
             self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Pentagon1.png')
@@ -35,8 +36,11 @@ class ExpBox:
 
     def draw(self):
         self.image.draw(self.scrollX, self.scrollY)
+        self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
+
 
     def update(self):
+        self.angle += 0.1
         self.myTrans.setDir(random.randint(1,3), random.randint(1,3))
         self.myTrans.update()
         self.x += self.dirX * self.speed

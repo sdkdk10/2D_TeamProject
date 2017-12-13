@@ -11,7 +11,7 @@ class Monster():
         global Distance
         global player
         global bg
-        #-----------------By. JH----------------------
+
         self.myTrans = myTransform()
         self.myTrans.setPos(random.randint(100, 5000), random.randint(100, 5000))
         self.myTrans.setDir(0, 0)
@@ -35,7 +35,12 @@ class Monster():
 
 
     def draw(self):
-        self.image.draw(self.scrollX, self.scrollY)
+        # self.image.draw(self.posX(), self.posY())
+        self.scrollX = self.myTrans.posX() - bg.window_left
+        self.scrollY = self.myTrans.posY() - bg.window_bottom
+        # self.image.draw(self.myTrans.posX(), self.myTrans.posY())
+        self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
+        # self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
         #self.dirX = player.getTransform().x - self.x
