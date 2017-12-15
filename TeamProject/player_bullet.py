@@ -34,8 +34,9 @@ class Player_Bullet:
         for i in range(stacklen):
             expmon = player_bullet_mgr.expMonster[i]
             if collision.collision_distance_A(self, expmon) == True:
-                print("Collision")
+                #print("Collision")
                 self.isDead = True
+                expmon.isDead = True
                 player.setExp(5)
                 return 1
 
@@ -43,8 +44,10 @@ class Player_Bullet:
         for i in range(stacklen_mon):
             mon = player_bullet_mgr.monster[i]
             if collision.collision_distance_A(self, mon) == True:
-                print("Monster Collision")
+                #print("Monster Collision")
                 self.isDead = True
+                mon.setIsDead(True)
+
                 player.setExp(10)
                 return 1
 
@@ -78,3 +81,6 @@ class Player_Bullet:
 
     def colY(self):
         return self.myTrans.posY()
+
+    def IsCol(self, iscol):
+        self.isDead = iscol

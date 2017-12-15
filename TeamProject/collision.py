@@ -8,11 +8,13 @@ def collision_distance_A(src, dest):
 
     size /= 2
 
+
     if distance < size:
-        dest.setIsDead(True)
-        src.setIsDead(True)
+        #dest.IsCol(True)
+        #src.IsCol(True)
         return True
     return False
+
 
 def collision_distance(srcX, srcY, srcSize, destX, destY, destSize):
     disX = srcX - destX
@@ -25,9 +27,6 @@ def collision_distance(srcX, srcY, srcSize, destX, destY, destSize):
     if distance < size:
         return True
     return False
-
-def boundingbox(self):
-    return self.scrollX - 10, self.scrollY - 10, self.scrollX + 10, self.scrollY + 10
 
 def collision(a,b):
     left_a, bottom_a, right_a, top_a = a.boundingbox()

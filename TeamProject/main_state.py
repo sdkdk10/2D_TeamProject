@@ -25,7 +25,7 @@ def enter():
     background.set_center_object(player)
     player.set_background(background)
     global boss
-    boss = myBoss(background)
+    boss = myBoss(background, player)
     global team
     team = [myMonster(player, background) for i in range(100)]
     global Monster
@@ -121,10 +121,10 @@ def draw():
 
     #--------UI 그리기----------
     # HP UI
-    black_hp_ui.draw()
-    hp_ui.draw()
-    score_ui.draw()
-    score_num_ui.draw()
+   #black_hp_ui.draw()
+   #hp_ui.draw()
+   #score_ui.draw()
+   #score_num_ui.draw()
 
     # EXP UI
     black_exp_ui.draw()

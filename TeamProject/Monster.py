@@ -8,6 +8,8 @@ import background
 import random
 from enum import Enum
 import math
+import player_bullet_mgr
+import collision
 
 class Monsterstate(Enum):
     monster_left = 1
@@ -29,8 +31,8 @@ class Monster():
         self.myTrans.setPos(random.randint(100, 5000), random.randint(100, 5000))
         self.myTrans.setDir(1, 0)
         self.myTrans.setSpeed(0)
-        self.x = 300
-        self.y = 300
+        self.x = 0
+        self.y = 0
         self.dirX = 1
         self.dirY = 0
         self.lookX = 1
@@ -47,24 +49,21 @@ class Monster():
         player = _player
         bg = _bg
         self.fcos = 0
-        self.fx = 0
-        self.fy = 0
-        self.temp = 0
+        self.isDead_sound = load_wav('monsterdie.wav')
+
         #=============================몬스터 state
         self.state = 0
 
     def draw(self):
-        #self.image.draw(self.posX(), self.posY())
         self.scrollX = self.myTrans.posX() - bg.window_left
         self.scrollY = self.myTrans.posY() - bg.window_bottom
-        #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
         self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
-        # self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
-        self.fx = player.getScrollX() - self.scrollX
-        self.fy = player.getScrollY() - self.scrollY
-        self.temp = math.sqrt(self.fx * self.fx + self.fy * self.fy)
+        self.myTrans.setDir(self.dirX, self.dirY)
+        self.myTrans.update()
+        self.scrollX = self.myTrans.posX() - bg.window_left
+        self.scrollY = self.myTrans.posY() - bg.window_bottom
         self.dirX = player.getScrollX() - self.scrollX
         self.dirY = player.getScrollY() - self.scrollY
         Distance = math.sqrt(self.dirX * self.dirX + self.dirY * self.dirY)
@@ -75,7 +74,6 @@ class Monster():
         else :
             self.dirX /= Distance
             self.dirY /= Distance
-
         if Distance2 == 0:
             self.lookX = 0
             self.lookY = 0
@@ -83,24 +81,15 @@ class Monster():
             self.lookX /= Distance2
             self.lookY /= Distance2
 
-        self.myTrans.setDir(self.dirX, self.dirY)
-        self.myTrans.update()
-        self.scrollX = self.myTrans.posX() - bg.window_left
-        self.scrollY = self.myTrans.posY() - bg.window_bottom
         #============================================ 몬스터가 플레이어 보는거 범위 설정 추가해야됨
-
         self.fcos = self.lookX * self.dirX + self.lookY * self.dirY
-        self.angle = math.radians(math.acos(self.fcos))
+        self.angle = math.degrees(math.acos(self.fcos))
 
-        if (self.dirX < self.lookX):
-            self.angle = 2 * math.pi - self.angle
-
-        if (self.temp < 100):
-            self.scrollX += math.cos(self.angle * math.pi) * 5
-            self.scrollY -= math.sin(self.angle * math.pi) * 5
-            self.myTrans.setSpeed(1)
-            #self.angle = self.angle * 180 / self.pi
-
+        if (self.dirY < self.lookY):
+            self.angle = 360 - self.angle
+        self.scrollX += math.cos(self.angle * math.pi) * 5
+        self.scrollY += math.sin(self.angle * math.pi) * 5
+        self.myTrans.setSpeed(1.5)
 
         #============================== 몬스터 스크롤
         if self.scrollX > 5000:
@@ -111,12 +100,23 @@ class Monster():
             --self.scrollY
         elif self.scrollY <= 0:
             ++self.scrollY
-        #==================몬스터 이동
-        self.monstermove()
+
+        #=================몬스터끼리 충돌처리
+        stacklen = len(player_bullet_mgr.monster)
+        for i in range(stacklen):
+            mon = player_bullet_mgr.monster[i]
+            if collision.collision_distance_A(self,mon) == True:
+                print("collision")
+                return True
+        #====================사운드
+
 
 
     def getTransform(self):
         return self.myTrans
+
+    def boundingbox(self):
+        return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
     def setPos(self, x, y):
         self.x = x
@@ -164,41 +164,49 @@ class Monster():
 
     def setIsDead(self, bDead):
         self.isDead = bDead
+        if self.isDead_sound == None:
+            self.isDead_sound = load_wav('monsterdie.wav')
+            self.isDead_sound.set_volume(32)
+            self.isDead()
+
+    def isDead(self):
+        self.isDead_sound.play()
 
     def getIsDead(self):
         return self.isDead
 
     def monstermove(self):
         self.state = random.randint(1, 9)
-        if self.state == Monsterstate.monster_left:
-            self.scrollX -= 1
-            self.angle = 180
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_right:
-            self.scrollX += 1
-            self.angle = 0
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_top:
-            self.scrollY -= 1
-            self.angle = 90
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_bottom:
-            self.scrollY += 1
-            self.angle = 360
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_leftup:
-            self.scrollX -= 1
-            self.scrollY -= 1
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_leftdown:
-            self.scrollX -= 1
-            self.scrollY += 1
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_rightup:
-            self.scrollX += 1
-            self.scrollY -= 1
-            self.myTrans.setSpeed(1)
-        elif self.state == Monsterstate.monster_rightdown:
-            self.scrollX += 1
-            self.scrollY += 1
-            self.myTrans.setSpeed(1)
+        if (self.temp > 100):
+            if self.state == Monsterstate.monster_left:
+                self.scrollX -= 1
+                self.angle = 180
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_right:
+                self.scrollX += 1
+                self.angle = 0
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_top:
+                self.scrollY -= 1
+                self.angle = 90
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_bottom:
+                self.scrollY += 1
+                self.angle = 360
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_leftup:
+                self.scrollX -= 1
+                self.scrollY -= 1
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_leftdown:
+                self.scrollX -= 1
+                self.scrollY += 1
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_rightup:
+                self.scrollX += 1
+                self.scrollY -= 1
+                self.myTrans.setSpeed(1)
+            elif self.state == Monsterstate.monster_rightdown:
+                self.scrollX += 1
+                self.scrollY += 1
+                self.myTrans.setSpeed(1)

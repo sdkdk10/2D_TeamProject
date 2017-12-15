@@ -3,6 +3,7 @@ from transform import Transform as myTransform
 from player_bullet import Player_Bullet as myBullet
 
 import player_bullet_mgr
+import collision
 
 #myTransform = None
 
@@ -15,7 +16,7 @@ class Player:
         self.image = load_image('Resource/Texture/new_Unit/Player/1.png')
         myTrans = myTransform()
         myTrans.setPos(1000, 500)
-        myTrans.setSpeed(0.8)
+        myTrans.setSpeed(2)
         myTrans.setSize(self.image.w, self.image.h)
         self.angle = 0
         self.angleDir = 0
@@ -56,7 +57,6 @@ class Player:
         posX = clamp(0, myTrans.posX(), self.background.w)
         posY = clamp(0, myTrans.posY(), self.background.h)
         myTrans.setPos(posX, posY)
-
 
     def handle_events(self, event):
         global myTrans
@@ -116,3 +116,9 @@ class Player:
              self.image = load_image('Resource/Texture/new_Unit/Player/' + str(level) + '.png')
              self.range += 7
              myTrans.speed += 0.3
+
+    def colX(self):
+        return self.scrollX
+
+    def colY(self):
+        return self.scrollY

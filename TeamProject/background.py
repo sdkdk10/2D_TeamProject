@@ -13,6 +13,10 @@ class Background:
         self.w = self.image.w
         self.h = self.image.h
 
+        self.bgm = load_music("Background.wav")
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
+
     def draw(self):
         #self.image.draw(self.x, self.y)
         self.image.clip_draw_to_origin(self.window_left, self.window_bottom, self.canvas_width, self.canvas_height, 0,0)
