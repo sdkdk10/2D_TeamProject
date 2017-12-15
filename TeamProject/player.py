@@ -15,7 +15,7 @@ class Player:
         self.image = load_image('Resource/Texture/new_Unit/Player/1.png')
         myTrans = myTransform()
         myTrans.setPos(1000, 500)
-        myTrans.setSpeed(2)
+        myTrans.setSpeed(0.8)
         myTrans.setSize(self.image.w, self.image.h)
         self.angle = 0
         self.angleDir = 0
@@ -25,6 +25,7 @@ class Player:
         self.hpUi = None
         self.expUI = None
         self.exp = 0
+        self.range = 30
 
     def set_background(self, _background):
         self.background = _background
@@ -108,3 +109,10 @@ class Player:
     def setExp(self, _exp):
         self.exp += _exp
         self.expUI.SetCurScore(_exp)
+
+    def ValueUIlevel(self, level):
+        print(level)
+        if level < 5:
+             self.image = load_image('Resource/Texture/new_Unit/Player/' + str(level) + '.png')
+             self.range += 7
+             myTrans.speed += 0.3

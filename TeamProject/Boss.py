@@ -1,54 +1,52 @@
 from pico2d import *
 from transform import Transform as myTransform
-from random import *
+#import player
+from player import Player as myPlayer
+from Monster import Monster as myMonster
+#from random import *
+import background
 import random
+import collision
 
-class ExpBox:
-    def __init__(self, _player):
-        global state
-        global background
-        state = random.randint(1,3)
+class Boss():
+    def __init__(self,_bg):
+        global Distance
+        global player
+        global bg
+
         self.myTrans = myTransform()
-        self.myTrans.setPos(random.randint(0, 5000), random.randint(100, 5000))
-        self.myTrans.setDir(1, 1)
-        self.myTrans.setSpeed(0.005)
+        self.myTrans.setPos(2500, 2500)
+        self.myTrans.setDir(0, 0)
+        self.myTrans.setSpeed(0)
         self.x = 300
         self.y = 300
-        self.dirX = 1
-        self.dirY = 1
-        self.speed = 1
+        self.dirX = 0
+        self.dirY = 0
+        self.speed = 0
         self.scrollX = 0
         self.scrollY = 0
         self.angle = 0
         self.isDead = False
-        if (state == 1):
-            self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Pentagon1.png')
-        elif(state == 2):
-            self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Triangle1.png')
-        elif(state == 3):
-            self.image = load_image('Resource/Texture/new_Unit/EXP_BOX/Rectangle1.png')
-
+        self.image = load_image('Resource/Texture/new_Unit/Monster/Boss/OctoTank.png')
         self.myTrans.setSize(self.image.w, self.image.h)
-
-    def set_background(self, _bg):
-        global background
-        background = _bg
+        #player = _player
+        bg = _bg
+        #---------------별그리기에 필요한것들
 
     def draw(self):
-        #self.image.draw(self.scrollX, self.scrollY)
+        # self.image.draw(self.posX(), self.posY())
+        self.scrollX = self.myTrans.posX() - bg.window_left
+        self.scrollY = self.myTrans.posY() - bg.window_bottom
         self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
+        #self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
-        self.angle += 0.1
-        self.myTrans.setDir(random.randint(1,3), random.randint(1,3))
+        self.angle += 5
         self.myTrans.update()
-        self.x += self.dirX * self.speed
-        self.y += self.dirY * self.speed
-        global background
-        sx = self.myTrans.posX() - background.window_left
-        sy = self.myTrans.posY() - background.window_bottom
-        self.scrollX = sx
-        self.scrollY = sy
+        self.scrollX = self.myTrans.posX() - bg.window_left
+        self.scrollY = self.myTrans.posY() - bg.window_bottom
+
+    #def tanmak(self):
 
     def getTransform(self):
         return self.myTrans
@@ -85,16 +83,11 @@ class ExpBox:
     def getScrollY(self):
         return self.scrollY
 
-
-    def getTransform(self):
-        return self.myTrans
-
     def isInWindow(self):
         if self.scrollX > 0 and self.scrollX < get_canvas_width():
             if self.scrollY > 0 and self.scrollY < get_canvas_height():
                 return True
         return False
-
 
     def colX(self):
         return self.scrollX
@@ -107,5 +100,3 @@ class ExpBox:
 
     def getIsDead(self):
         return self.isDead
-
-

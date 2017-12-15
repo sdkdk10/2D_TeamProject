@@ -1,7 +1,7 @@
 from pico2d import *
 
 class UI_Value:
-    def __init__(self, _x, _y, _maxScore, _route, _scaleX = 1, _scaleY = 1):
+    def __init__(self, _x, _y, _maxScore, _route, _object, _scaleX = 1, _scaleY = 1):
         self.x = _x
         self.y = _y
         self.image = load_image(_route)
@@ -11,6 +11,8 @@ class UI_Value:
         self.sizeY = self.image.h * self.scaleY
         self.curScore = 0
         self.maxScore = _maxScore
+        self.level = 1
+        self.object = _object
 
     def draw(self):
         #self.image.draw(self.x, self.y, self.sizeX, self.sizeY)
@@ -26,6 +28,11 @@ class UI_Value:
         self.curScore += _score
         if self.curScore > self.maxScore:
             self.curScore = 0
+            self.level += 1
+            self.object.ValueUIlevel(self.level)
+        elif self.curScore < 0:
+            print("------------------Level minus---------------")
+            --self.level
 
     def getCurScore(self):
         return self.curScore

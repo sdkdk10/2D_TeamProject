@@ -6,6 +6,7 @@ from player import Player as myPlayer
 from background import Background as myBackground
 from Monster import Monster as myMonster
 from ExpBox import ExpBox as myExpBox
+from Boss import Boss as myBoss
 from ui_black import UI_Black as myBlack
 from ui_font import UI_Font as myFont
 from ui_num import UI_Num as myNum
@@ -23,6 +24,8 @@ def enter():
     background = myBackground()
     background.set_center_object(player)
     player.set_background(background)
+    global boss
+    boss = myBoss(background)
     global team
     team = [myMonster(player, background) for i in range(100)]
     global Monster
@@ -44,11 +47,11 @@ def enter():
     score_num_ui = myNum(600, 80, 0.3)
     score_num_ui.setScore(142)
     global hp_ui
-    hp_ui = myValue(600, 80, 200, 'Resource/Texture/UI_Bar/Scorebar_Green.png', 0.57, 0.8)
+    hp_ui = myValue(600, 80, 200, 'Resource/Texture/UI_Bar/Scorebar_Green.png', player, 0.57, 0.8)
     global black_exp_ui
     black_exp_ui = myBlack(600, 50, 1.3, 1.3)
     global exp_ui
-    exp_ui = myValue(600, 50, 200, 'Resource/Texture/UI_Bar/Expbar_Yellow.png', 1.25, 1)
+    exp_ui = myValue(600, 50, 200, 'Resource/Texture/UI_Bar/Expbar_Yellow.png', player, 1.25, 1)
     player.setExpUI(exp_ui)
 
 def exit():
@@ -58,6 +61,8 @@ def exit():
     del(player)
     global Monster
     del(Monster)
+    global boss
+    del(boss)
     player_bullet_mgr.exit()
     for i in team:
         del(i)
@@ -84,12 +89,12 @@ def handle_events():
 
 def update():
     global player, background
-    global Exp_update, Mon_update
+    global Exp_update, Mon_update, Boss_update
     Exp_update = [e for e in team1 if e.getIsDead() == False]
     Mon_update = [m for m in team if m.getIsDead() == False]
     player_bullet_mgr.setExpMonster(Exp_update)
     player_bullet_mgr.setMonster(Mon_update)
-
+    boss.update()
     player.update()
     background.update()
     for monster_team in Mon_update:
@@ -98,21 +103,20 @@ def update():
         exp_team.update()
     player_bullet_mgr.update()
 
-
 def draw():
     global player, background
     global Exp_update, Mon_update
     global black_hp_ui, score_ui, score_num_ui, hp_ui, black_exp_ui
     clear_canvas()
     background.draw()
+    player_bullet_mgr.draw()
     for monster_team in Mon_update:
         if monster_team.isInWindow() == True:
             monster_team.draw()
     for expBox_team in Exp_update:
         if expBox_team.isInWindow() == True:
             expBox_team.draw()
-
-    player_bullet_mgr.draw()
+    boss.draw()
     player.draw()
 
     #--------UI 그리기----------

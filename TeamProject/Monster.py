@@ -2,9 +2,22 @@ from pico2d import *
 from transform import Transform as myTransform
 #import player
 from player import Player as myPlayer
+from ExpBox import ExpBox as expbox
 #from random import *
 import background
 import random
+from enum import Enum
+import math
+
+class Monsterstate(Enum):
+    monster_left = 1
+    monster_right = 2
+    monster_top = 3
+    monster_bottom = 4
+    monster_leftup = 5
+    monster_rightup = 6
+    monster_leftdown = 7
+    monster_rightdown = 8
 
 class Monster():
     def __init__(self, _player, _bg):
@@ -14,14 +27,15 @@ class Monster():
 
         self.myTrans = myTransform()
         self.myTrans.setPos(random.randint(100, 5000), random.randint(100, 5000))
-        self.myTrans.setDir(0, 0)
-        self.myTrans.setSpeed(1)
-
+        self.myTrans.setDir(1, 0)
+        self.myTrans.setSpeed(0)
         self.x = 300
         self.y = 300
-        self.dirX = 0
+        self.dirX = 1
         self.dirY = 0
-        self.speed = 1
+        self.lookX = 1
+        self.lookY = 0
+        self.speed = 0
         self.angle = 0
         self.angleDir = 0
         self.scrollX = 0
@@ -32,37 +46,74 @@ class Monster():
         #player = myPlayer()
         player = _player
         bg = _bg
-
+        self.fcos = 0
+        self.fx = 0
+        self.fy = 0
+        self.temp = 0
+        #=============================몬스터 state
+        self.state = 0
 
     def draw(self):
-        # self.image.draw(self.posX(), self.posY())
+        #self.image.draw(self.posX(), self.posY())
         self.scrollX = self.myTrans.posX() - bg.window_left
         self.scrollY = self.myTrans.posY() - bg.window_bottom
-        # self.image.draw(self.myTrans.posX(), self.myTrans.posY())
+        #self.image.draw(self.myTrans.posX(), self.myTrans.posY())
         self.image.rotate_draw(math.radians(self.angle), self.scrollX, self.scrollY)
         # self.image.draw(self.scrollX, self.scrollY)
 
     def update(self):
-        #self.dirX = player.getTransform().x - self.x
-        #self.dirY = player.getTransform().y - self.y
-
-        #self.dirX = player.getScrollX() - self.myTrans.posX()
-        #self.dirY = player.getScrollY() - self.myTrans.posY()
+        self.fx = player.getScrollX() - self.scrollX
+        self.fy = player.getScrollY() - self.scrollY
+        self.temp = math.sqrt(self.fx * self.fx + self.fy * self.fy)
         self.dirX = player.getScrollX() - self.scrollX
         self.dirY = player.getScrollY() - self.scrollY
         Distance = math.sqrt(self.dirX * self.dirX + self.dirY * self.dirY)
+        Distance2 = math.sqrt(self.lookX * self.lookX + self.lookY * self.lookY)
         if Distance == 0:
             self.dirY = 0
             self.dirX = 0
         else :
             self.dirX /= Distance
             self.dirY /= Distance
+
+        if Distance2 == 0:
+            self.lookX = 0
+            self.lookY = 0
+        else :
+            self.lookX /= Distance2
+            self.lookY /= Distance2
+
         self.myTrans.setDir(self.dirX, self.dirY)
         self.myTrans.update()
         self.scrollX = self.myTrans.posX() - bg.window_left
         self.scrollY = self.myTrans.posY() - bg.window_bottom
-        #self.x += self.dirX * self.speed
-        #self.y += self.dirY * self.speed
+        #============================================ 몬스터가 플레이어 보는거 범위 설정 추가해야됨
+
+        self.fcos = self.lookX * self.dirX + self.lookY * self.dirY
+        self.angle = math.radians(math.acos(self.fcos))
+
+        if (self.dirX < self.lookX):
+            self.angle = 2 * math.pi - self.angle
+
+        if (self.temp < 100):
+            self.scrollX += math.cos(self.angle * math.pi) * 5
+            self.scrollY -= math.sin(self.angle * math.pi) * 5
+            self.myTrans.setSpeed(1)
+            #self.angle = self.angle * 180 / self.pi
+
+
+        #============================== 몬스터 스크롤
+        if self.scrollX > 5000:
+            --self.scrollX
+        elif self.scrollX <= 0:
+            ++self.scrollX
+        elif self.scrollY > 5000:
+            --self.scrollY
+        elif self.scrollY <= 0:
+            ++self.scrollY
+        #==================몬스터 이동
+        self.monstermove()
+
 
     def getTransform(self):
         return self.myTrans
@@ -116,3 +167,38 @@ class Monster():
 
     def getIsDead(self):
         return self.isDead
+
+    def monstermove(self):
+        self.state = random.randint(1, 9)
+        if self.state == Monsterstate.monster_left:
+            self.scrollX -= 1
+            self.angle = 180
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_right:
+            self.scrollX += 1
+            self.angle = 0
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_top:
+            self.scrollY -= 1
+            self.angle = 90
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_bottom:
+            self.scrollY += 1
+            self.angle = 360
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_leftup:
+            self.scrollX -= 1
+            self.scrollY -= 1
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_leftdown:
+            self.scrollX -= 1
+            self.scrollY += 1
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_rightup:
+            self.scrollX += 1
+            self.scrollY -= 1
+            self.myTrans.setSpeed(1)
+        elif self.state == Monsterstate.monster_rightdown:
+            self.scrollX += 1
+            self.scrollY += 1
+            self.myTrans.setSpeed(1)

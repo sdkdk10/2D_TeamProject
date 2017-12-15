@@ -50,7 +50,7 @@ class Player_Bullet:
 
         self.count += 1
         #print(self.count)
-        if self.count > 50:
+        if self.count > player.range:
             self.isDead = True
             return 1
 
